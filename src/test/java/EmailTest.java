@@ -3,37 +3,69 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EmailTest {
 
-    Email emailValidator = new Email();
+    Email email = new Email();
 
     @Test
     void testNullEmail() {
-        assertThrows(IllegalArgumentException.class,
-                () -> emailValidator.isValidEmail(null));
+        assertThrows(IllegalArgumentException.class, () -> email.isValidEmail(null));
     }
 
     @Test
     void testEmptyEmail() {
-        assertThrows(IllegalArgumentException.class,
-                () -> emailValidator.isValidEmail(""));
+        assertThrows(IllegalArgumentException.class, () -> email.isValidEmail(""));
     }
 
     @Test
-    void testEmailWithoutAt() {
-        assertFalse(emailValidator.isValidEmail("usuario.gmail.com"));
+    void testMissingAt() {
+        assertFalse(email.isValidEmail("usuario.gmail.com"));
     }
 
     @Test
-    void testEmailDoubleAt() {
-        assertFalse(emailValidator.isValidEmail("a@@b.com"));
+    void testMissingDomain() {
+        assertFalse(email.isValidEmail("usuario@com"));
     }
 
     @Test
-    void testLocalPartInvalid() {
-        assertFalse(emailValidator.isValidEmail(".abc@gmail.com"));
+    void testStartsWithDot() {
+        assertFalse(email.isValidEmail(".user@gmail.com"));
     }
 
     @Test
-    void testBasicValidEmail() {
-        assertTrue(emailValidator.isValidEmail("user@mail.com"));
+    void testEndsWithDot() {
+        assertFalse(email.isValidEmail("user.@gmail.com"));
     }
+
+    @Test
+    void testDoubleDot() {
+        assertFalse(email.isValidEmail("user..test@gmail.com"));
+    }
+
+    @Test
+    void testDomainNoDot() {
+        assertFalse(email.isValidEmail("user@gmail"));
+    }
+
+    @Test
+    void testValidEmail() {
+        assertTrue(email.isValidEmail("cliente123@tienda.com"));
+    }
+
+    @Test
+    void testVeryLongEmail() {
+        String longEmail = "a".repeat(250) + "@gmail.com";
+        assertTrue(email.isValidEmail(longEmail)); // sigue válido
+    }
+    @Test
+    void testLocalPartEmpty() {
+        Email e = new Email();
+        assertFalse(e.isValidEmail("@gmail.com"));
+    }
+    @Test
+    void testMultipleAtSymbols() {
+        Email e = new Email();
+        assertFalse(e.isValidEmail("user@@gmail.com"));
+    }
+
+
 }
+
